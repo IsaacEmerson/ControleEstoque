@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "menu.h"
-
+//teste
 int menu_principal(Usuario* usuario){
     int opcao;
     printf("############ BEM VINDO %s\n",usuario->nome);
