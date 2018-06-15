@@ -4,15 +4,6 @@
 #include "menu.h"
 ///#include "produto.h"
 
-typedef struct{
-    int id;
-    Data data;
-    Usuario feita_por;
-    Produto produto;
-    char operacao;
-    int quantidade;
-}Movimentacao;
-
 int main(){
     Usuario *usuario = 0;
     Produto *produtos = 0;
@@ -20,15 +11,14 @@ int main(){
     int n_produtos=0,id_produto,n_old,quant=0;
     int id_pro=1,quant_user=0,id_user;
 
-    movimentacoes = (Movimentacao*) malloc(sizeof(Movimentacao));
-
     usuario = cria_usuario(usuario,&quant_user);
     
     while(!logar(usuario,&quant_user,&id_user)){
         printf("Senha incorreta !\n");
     }
 
-    produtos = arquivo_para_vetor(produtos,&n_produtos,&id_pro);
+    //movimentacoes = arquivo_mov_para_vetor(movimentacoes);
+    produtos = arquivo_prod_para_vetor(produtos,&n_produtos,&id_pro);
 
     while(1){
         switch(menu_principal(usuario[id_user])){

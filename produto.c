@@ -69,9 +69,10 @@ void lista_produtos(Produto *produtos, int *n_produtos){
 }
 
 int movimenta_estoque(Produto *produtos, int *n_produtos, int id,int quantidade,char operacao){
-    
+    int quant_old=0;
     for(int i=0;i<*n_produtos;i++){
        if(produtos[i].id==id){
+           quant_old=produtos[i].quantidade;
            if(operacao=='+'){
                produtos[i].quantidade+=quantidade;
            }else if(operacao=='-'){
@@ -81,10 +82,18 @@ int movimenta_estoque(Produto *produtos, int *n_produtos, int id,int quantidade,
                    produtos[i].quantidade-=quantidade;
                }
            }
+           FILE *arquivo_mov = fopen("movimentacao.txt","w");
+            if (arquivo_mov == 0) {
+                printf("Erro: nao foi possivel abrir arquivo!\n");
+                return 0;
+            }
+            fprintf(arquivo_mov, "%s\n%d\n%c\n%d\n%d", produtos[i].nome,quant_old,operacao,quantidade,produtos[i].quantidade);
+            fclose(arquivo_mov);
            return 1;
            break;
        } 
     }
+
     return 0;
 }
 
@@ -96,30 +105,51 @@ int produtos_para_arquivo(Produto *produtos, int *n_produtos){
    }
 
    for (int i = 0; i <*n_produtos; i++){
-      fprintf(arquivo_produtos, "%d %s %d %.2f %d %d %d %s\n", produtos[i].id,produtos[i].nome,produtos[i].quantidade,produtos[i].preco,produtos[i].valido_ate.dia,produtos[i].valido_ate.mes,produtos[i].valido_ate.ano,produtos[i].cadastrado_por.nome);
+      fprintf(arquivo_produtos, "%d\n%s\n%d\n%.2f\n%d\n%d\n%d\n%s\n", produtos[i].id,produtos[i].nome,produtos[i].quantidade,produtos[i].preco,produtos[i].valido_ate.dia,produtos[i].valido_ate.mes,produtos[i].valido_ate.ano,produtos[i].cadastrado_por.nome);
    }
 
    fclose(arquivo_produtos);
    return 1;
 }
 
-Produto* arquivo_para_vetor(Produto *produtos, int *n_produtos,int *id){
+Produto* arquivo_prod_para_vetor(Produto *produtos, int *n_produtos,int *id){
     FILE *arquivo_produtos = fopen("produtos.txt","r");
     if (arquivo_produtos == 0) {
       printf("Erro: nao foi possivel abrir arquivo!\n");
       return 0;
    }
-   
+   fseek(arquivo_produtos, 0, SEEK_SET); // apontar para o principio
    Produto produto;
-    while (fscanf(arquivo_produtos, "%d ", &produto.id) == 1) {
-      //fgets(produto.nome, sizeof(produto.nome), arquivo_produtos);
-      //produto.nome[strlen(produto.nome)-1] = 0;
-      fscanf(arquivo_produtos, "%s %d %.2f %d %d %d %s\n", &produto.nome,&produto.quantidade,&produto.preco,&produto.valido_ate.dia,&produto.valido_ate.mes,&produto.valido_ate.ano,&produto.cadastrado_por.nome);
-      //insere_produto(produtos,n_produtos,produto,id);
-      printf("%s\n",produto.nome);
-      printf("%d",produto.id);
+    while (fscanf(arquivo_produtos, "%d\n", &produto.id) == 1) {
+      fgets(produto.nome, sizeof(produto.nome), arquivo_produtos);
+      produto.nome[strlen(produto.nome)-1] = 0;
+
+      fscanf(arquivo_produtos, "%d\n%f\n%d\n%d\n%d\n",&produto.quantidade,&produto.preco,&produto.valido_ate.dia,&produto.valido_ate.mes,&produto.valido_ate.ano);
+      
+      fgets(produto.cadastrado_por.nome, sizeof(produto.cadastrado_por.nome), arquivo_produtos);
+      produto.cadastrado_por.nome[strlen(produto.cadastrado_por.nome)-1] = 0;
+      produtos=insere_produto(produtos,n_produtos,produto,id);
+    //   printf("%d\n",produto.id);
+    //   printf("%s\n",produto.nome);
+    //   printf("%d\n",produto.quantidade);
+    //   printf("%.2f\n",produto.preco);
+    //   printf("%d/%d/%d\n",produto.valido_ate.dia,produto.valido_ate.mes,produto.valido_ate.ano);
+    //   printf("%s\n",produto.cadastrado_por.nome);
+      
    }
 
     fclose(arquivo_produtos);
     return produtos;
+}
+
+Movimentacao* arquivo_mov_para_vetor(Movimentacao *mov){
+    FILE *arquivo_mov = fopen("movimentacoes.txt","r");
+    if (arquivo_mov == 0) {
+      printf("Erro: nao foi possivel abrir arquivo!\n");
+      return 0;
+   }
+   fseek(arquivo_mov, 0, SEEK_SET); // apontar para o principio
+   Movimentacao movime;
+   
+   return mov;
 }

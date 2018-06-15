@@ -1,1 +1,16 @@
-1 ytu 8 7.00 8 8 8888 Isaac Emerson
+1
+ttttt
+0
+1.00
+12
+131
+1234
+Isaac Emerson
+2
+dddddd
+6
+5.00
+77
+88
+8888
+Isaac Emerson
